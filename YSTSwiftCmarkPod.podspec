@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'YSTSwiftCmarkPod'
-  s.version          = '0.29.1.2'
+  s.version          = '0.29.1.3'
   s.summary          = 'A CocoaPods wrapper for the cmark-gfm library.'
   s.description      = 'This pod provides the cmark-gfm library, including both the core parser and GFM extensions, for use in iOS, macOS, and other Apple platforms.'
   s.homepage         = 'https://github.com/taojeff/YSTSwiftCmarkPod'
@@ -10,24 +10,29 @@ Pod::Spec.new do |s|
 
   s.ios.deployment_target = '12.0'
 
-  # Keep Swift import unchanged: import swift_cmark_pod
+  # Keep old Swift import unchanged: import swift_cmark_pod
   s.module_name = 'swift_cmark_pod'
 
-  s.default_subspecs = ['cmark_gfm', 'cmark_gfm_extensions']
+  s.default_subspecs = 'cmark_gfm', 'cmark_gfm_extensions'
+
+  common_xcconfig = {
+    'DEFINES_MODULE' => 'YES',
+    'CLANG_ENABLE_MODULES' => 'YES',
+    'USE_HEADERMAP' => 'NO',
+    'ALWAYS_SEARCH_USER_PATHS' => 'NO',
+    'HEADER_SEARCH_PATHS' => '"$(PODS_TARGET_SRCROOT)/src/include" "$(PODS_TARGET_SRCROOT)/src" "$(PODS_TARGET_SRCROOT)/extensions/include" "$(PODS_TARGET_SRCROOT)/extensions"',
+    'USER_HEADER_SEARCH_PATHS' => '"$(PODS_TARGET_SRCROOT)/src/include" "$(PODS_TARGET_SRCROOT)/src" "$(PODS_TARGET_SRCROOT)/extensions/include" "$(PODS_TARGET_SRCROOT)/extensions"',
+    'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited) CMARK_GFM=1 CMARK_GFM_STATIC_DEFINE=1',
+    'OTHER_CFLAGS' => '$(inherited) -include $(PODS_TARGET_SRCROOT)/src/include/cmark-gfm.h'
+  }
 
   s.subspec 'cmark_gfm' do |ss|
     ss.source_files = 'src/**/*.{h,c}'
     ss.preserve_paths = 'src/**/*'
     ss.public_header_files = 'src/include/*.h'
-
-    ss.pod_target_xcconfig = {
-      'DEFINES_MODULE' => 'YES',
-      'CLANG_ENABLE_MODULES' => 'YES',
-      'MODULEMAP_FILE' => '$(PODS_TARGET_SRCROOT)/src/include/module.modulemap',
-      'HEADER_SEARCH_PATHS' => '"$(PODS_TARGET_SRCROOT)/src/include" "$(PODS_TARGET_SRCROOT)/src" $(inherited)',
-      'USER_HEADER_SEARCH_PATHS' => '"$(PODS_TARGET_SRCROOT)/src/include" "$(PODS_TARGET_SRCROOT)/src"',
-      'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited) CMARK_GFM=1 CMARK_GFM_STATIC_DEFINE=1'
-    }
+    ss.pod_target_xcconfig = common_xcconfig.merge(
+      'MODULEMAP_FILE' => '$(PODS_TARGET_SRCROOT)/src/include/module.modulemap'
+    )
   end
 
   s.subspec 'cmark_gfm_extensions' do |ss|
@@ -35,14 +40,6 @@ Pod::Spec.new do |s|
     ss.source_files = 'extensions/**/*.{h,c}'
     ss.preserve_paths = 'extensions/**/*'
     ss.public_header_files = 'extensions/include/*.h'
-
-    ss.pod_target_xcconfig = {
-      'DEFINES_MODULE' => 'YES',
-      'CLANG_ENABLE_MODULES' => 'YES',
-      'HEADER_SEARCH_PATHS' => '"$(PODS_TARGET_SRCROOT)/src/include" "$(PODS_TARGET_SRCROOT)/extensions/include" "$(PODS_TARGET_SRCROOT)/src" "$(PODS_TARGET_SRCROOT)/extensions" $(inherited)',
-      'USER_HEADER_SEARCH_PATHS' => '"$(PODS_TARGET_SRCROOT)/src/include" "$(PODS_TARGET_SRCROOT)/extensions/include" "$(PODS_TARGET_SRCROOT)/src" "$(PODS_TARGET_SRCROOT)/extensions"',
-      'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited) CMARK_GFM=1 CMARK_GFM_STATIC_DEFINE=1',
-      'OTHER_CFLAGS' => '$(inherited) -include $(PODS_TARGET_SRCROOT)/src/include/cmark-gfm.h'
-    }
+    ss.pod_target_xcconfig = common_xcconfig
   end
 end

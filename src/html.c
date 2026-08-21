@@ -454,10 +454,13 @@ static int S_render_node(cmark_html_renderer *renderer, cmark_node *node,
 
   case CMARK_NODE_FOOTNOTE_REFERENCE:
     if (entering) {
+      const cmark_chunk *label =
+          node->parent_footnote_def ? &node->parent_footnote_def->as.literal
+                                    : &node->as.literal;
       cmark_strbuf_puts(html, "<sup class=\"footnote-ref\"><a href=\"#fn-");
-      houdini_escape_href(html, node->parent_footnote_def->as.literal.data, node->parent_footnote_def->as.literal.len);
+      houdini_escape_href(html, label->data, label->len);
       cmark_strbuf_puts(html, "\" id=\"fnref-");
-      houdini_escape_href(html, node->parent_footnote_def->as.literal.data, node->parent_footnote_def->as.literal.len);
+      houdini_escape_href(html, label->data, label->len);
 
       if (node->footnote.ref_ix > 1) {
         char n[32];

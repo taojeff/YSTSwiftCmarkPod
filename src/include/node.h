@@ -23,6 +23,7 @@ typedef struct {
   unsigned char bullet_char;
   bool tight;
   bool checked; // For task list extension
+  bool is_check_box;
 } cmark_list;
 
 typedef struct {
@@ -102,6 +103,8 @@ struct cmark_node {
   } footnote;
 
   cmark_node *parent_footnote_def;
+
+  int cell_index; // Compatibility with the original AntMarkdown table layout.
 
   union {
     cmark_chunk literal;

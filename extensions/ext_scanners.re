@@ -1,4 +1,4 @@
-/*!re2c re2c:flags:no-debug-info = 1; */
+
 /*!re2c re2c:indent:string = '  '; */
 
 #include <stdlib.h>
@@ -30,11 +30,22 @@ bufsize_t _ext_scan_at(bufsize_t (*scanner)(const unsigned char *), unsigned cha
   spacechar = [ \t\v\f];
   newline = [\r]?[\n];
   escaped_char = [\\][|!"#$%&'()*+,./:;<=>?@[\\\]^_`{}~-];
+  escaped_char1 = [\\][|!"#$%&'*+,./:;<=>?@[\\\]^_`{}~-];
+  escaped_char2 = [\\][|!"#$%&'()*+,./:;<=>?@\\^_`{}~-];
 
   table_marker = (spacechar*[:]?[-]+[:]?spacechar*);
   table_cell = (escaped_char|[^|\r\n])+;
 
+  emoji = ":" [a-zA-Z0-9_+-]+ ":";
+
   tasklist = spacechar*("-"|"+"|"*"|[0-9]+.)spacechar+("[ ]"|"[x]")spacechar+;
+
+  math_inline1 = "$" ([^$\x00] | escaped_char) ([^$\x00]*([^$\x00] | escaped_char))* "$";
+  math_inline2 = "\\\(" ([^$\x00] | escaped_char1) ([^$\x00]*([^$\x00] | escaped_char1))* "\\\)";
+  math_inline = math_inline1 | math_inline2;
+  math_block1 = "$$" ([^$\x00]+ | escaped_char+ )* "$$";
+  math_block2 = "\\\[" ([^$\x00]+ | escaped_char2+ )* "\\\]";
+  math_block = math_block1 | math_block2;
 */
 
 bufsize_t _scan_table_start(const unsigned char *p)
@@ -90,3 +101,34 @@ bufsize_t _scan_tasklist(const unsigned char *p)
     * { return 0; }
   */
 }
+
+bufsize_t _scan_math_inline(const unsigned char *p)
+{
+  const unsigned char *marker = NULL;
+  const unsigned char *start = p;
+  /*!re2c
+    math_inline { return (bufsize_t)(p - start); }
+    * { return 0; }
+  */
+}
+
+bufsize_t _scan_math_block(const unsigned char *p)
+{
+  const unsigned char *marker = NULL;
+  const unsigned char *start = p;
+  /*!re2c
+    math_block { return (bufsize_t)(p - start); }
+    * { return 0; }
+  */
+}
+
+bufsize_t _scan_emoji(const unsigned char *p)
+{
+  const unsigned char *marker = NULL;
+  const unsigned char *start = p;
+  /*!re2c
+    emoji { return (bufsize_t)(p - start); }
+    * { return 0; }
+  */
+}
+

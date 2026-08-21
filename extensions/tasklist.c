@@ -90,10 +90,15 @@ static cmark_node *open_tasklist_item(cmark_syntax_extension *self,
   }
 
   cmark_node_set_syntax_extension(parent_container, self);
+
+  const unsigned char *checkbox = input + parser->offset;
   cmark_parser_advance_offset(parser, (char *)input, 3, false);
 
   // Either an upper or lower case X means the task is completed.
-  parent_container->as.list.checked = (strstr((char*)input, "[x]") || strstr((char*)input, "[X]"));
+  parent_container->as.list.is_check_box = true;
+  parent_container->as.list.checked =
+      (checkbox + 3 <= input + len &&
+       (checkbox[1] == 'x' || checkbox[1] == 'X') && checkbox[2] == ']');
 
   return NULL;
 }

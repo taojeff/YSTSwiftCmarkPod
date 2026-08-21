@@ -10,6 +10,8 @@
 cmark_node_type CMARK_NODE_LAST_BLOCK = CMARK_NODE_FOOTNOTE_DEFINITION;
 cmark_node_type CMARK_NODE_LAST_INLINE = CMARK_NODE_ATTRIBUTE;
 
+int oneEnterNewlineEnable = 0;
+
 int cmark_version(void) { return CMARK_GFM_VERSION; }
 
 const char *cmark_version_string(void) { return CMARK_GFM_VERSION_STRING; }

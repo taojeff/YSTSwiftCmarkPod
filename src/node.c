@@ -382,6 +382,13 @@ cmark_node *cmark_node_parent_footnote_def(cmark_node *node) {
   }
 }
 
+int cmark_node_get_footnote_idx(cmark_node *node) {
+  if (node == NULL)
+    return 0;
+
+  return node->footnote.ref_ix;
+}
+
 void *cmark_node_get_user_data(cmark_node *node) {
   if (node == NULL) {
     return NULL;
@@ -512,6 +519,27 @@ cmark_list_type cmark_node_get_list_type(cmark_node *node) {
   } else {
     return CMARK_NO_LIST;
   }
+}
+
+int cmark_node_get_cell_index(cmark_node *node) {
+  if (node == NULL)
+    return -1;
+
+  return node->cell_index;
+}
+
+int cmark_node_get_checked(cmark_node *node) {
+  if (node == NULL)
+    return 0;
+
+  return node->as.list.checked ? 1 : 0;
+}
+
+int cmark_node_get_is_checkbox(cmark_node *node) {
+  if (node == NULL)
+    return 0;
+
+  return node->as.list.is_check_box ? 1 : 0;
 }
 
 int cmark_node_set_list_type(cmark_node *node, cmark_list_type type) {

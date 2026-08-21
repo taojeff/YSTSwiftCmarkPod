@@ -1,9 +1,13 @@
 add_library(libcmark-gfm-extensions
   autolink.c
   core-extensions.c
+  emoji.c
+  emoji.h
   ext_scanners.c
   ext_scanners.h
   ext_scanners.re
+  math_mark.c
+  math_mark.h
   strikethrough.c
   table.c
   tagfilter.c

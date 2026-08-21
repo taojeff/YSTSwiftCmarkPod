@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'YSTSwiftCmarkPod'
-  s.version          = '0.29.1.3'
+  s.version          = '0.29.1.4'
   s.summary          = 'A CocoaPods wrapper for the cmark-gfm library.'
   s.description      = 'This pod provides the cmark-gfm library, including both the core parser and GFM extensions, for use in iOS, macOS, and other Apple platforms.'
   s.homepage         = 'https://github.com/taojeff/YSTSwiftCmarkPod'

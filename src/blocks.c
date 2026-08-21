@@ -537,6 +537,11 @@ static void process_footnotes(cmark_parser *parser) {
 
         cur->as.literal = cmark_chunk_buf_detach(&buf);
       } else {
+        if (parser->options & CMARK_OPT_FOOTNOTES_WITHOUT_DEFINITION) {
+          cur->footnote.ref_ix = ++ix;
+          continue;
+        }
+
         cmark_node *text = (cmark_node *)parser->mem->calloc(1, sizeof(*text));
         cmark_strbuf_init(parser->mem, &text->content, 0);
         text->type = (uint16_t) CMARK_NODE_TEXT;
@@ -711,6 +716,13 @@ cmark_node *cmark_parse_file(FILE *f, int options) {
 
 cmark_node *cmark_parse_document(const char *buffer, size_t len, int options) {
   cmark_parser *parser = cmark_parser_new(options);
+  cmark_parser_attach_syntax_extension(parser, cmark_find_syntax_extension("table"));
+  cmark_parser_attach_syntax_extension(parser, cmark_find_syntax_extension("strikethrough"));
+  cmark_parser_attach_syntax_extension(parser, cmark_find_syntax_extension("tagfilter"));
+  cmark_parser_attach_syntax_extension(parser, cmark_find_syntax_extension("math"));
+  cmark_parser_attach_syntax_extension(parser, cmark_find_syntax_extension("emoji"));
+  cmark_parser_attach_syntax_extension(parser, cmark_find_syntax_extension("tasklist"));
+
   cmark_node *document;
 
   S_parser_feed(parser, (const unsigned char *)buffer, len, true);

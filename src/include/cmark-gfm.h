@@ -242,6 +242,9 @@ CMARK_GFM_EXPORT cmark_node *cmark_node_nth_child(cmark_node *node, int n);
  */
 CMARK_GFM_EXPORT cmark_node *cmark_node_parent_footnote_def(cmark_node *node);
 
+/** Returns the rendered footnote index for a footnote reference or definition. */
+CMARK_GFM_EXPORT int cmark_node_get_footnote_idx(cmark_node *node);
+
 /**
  * ## Iterator
  *
@@ -396,6 +399,13 @@ CMARK_GFM_EXPORT int cmark_node_set_heading_level(cmark_node *node, int level);
  * is not a list.
  */
 CMARK_GFM_EXPORT cmark_list_type cmark_node_get_list_type(cmark_node *node);
+
+/** Compatibility accessors used by AntMarkdown task-list rendering. */
+CMARK_GFM_EXPORT int cmark_node_get_checked(cmark_node *node);
+CMARK_GFM_EXPORT int cmark_node_get_is_checkbox(cmark_node *node);
+
+/** Compatibility accessor for the cell's column index in an AntMarkdown table. */
+CMARK_GFM_EXPORT int cmark_node_get_cell_index(cmark_node *node);
 
 /** Sets the list type of 'node', returning 1 on success and 0 on error.
  */
@@ -827,6 +837,12 @@ char *cmark_render_latex_with_mem(cmark_node *root, int options, int width, cmar
  * Does nothing unless \c CMARK_OPT_TABLE_SPANS is also set.
  */
 #define CMARK_OPT_TABLE_ROWSPAN_DITTO (1 << 21)
+
+/** AntMarkdown compatibility option: keep footnote references without definitions. */
+#define CMARK_OPT_FOOTNOTES_WITHOUT_DEFINITION (1 << 22)
+
+/** AntMarkdown compatibility flag: treat one newline in inline content as a hard break. */
+extern int oneEnterNewlineEnable;
 
 /**
  * ## Version information

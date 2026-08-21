@@ -167,6 +167,17 @@ static int set_cell_index(cmark_node *node, int i) {
   return 1;
 }
 
+static unsigned get_cell_index(cmark_node *node) {
+  if (!node || node->type != CMARK_NODE_TABLE_CELL)
+    return UINT_MAX;
+
+  node_cell_data *data = (node_cell_data *)node->as.opaque;
+  if (!data)
+    return UINT_MAX;
+
+  return (unsigned)data->cell_index;
+}
+
 static unsigned get_cell_colspan(cmark_node *node) {
   if (!node || node->type != CMARK_NODE_TABLE_CELL)
     return UINT_MAX;
@@ -531,6 +542,7 @@ static cmark_node *try_opening_table_header(cmark_syntax_extension *self,
     cell->cell_data = NULL;
     cmark_node_set_string_content(header_cell, (char *) cell->buf->ptr);
     cmark_node_set_syntax_extension(header_cell, self);
+    header_cell->cell_index = i;
     set_cell_index(header_cell, i);
   }
 
@@ -618,6 +630,7 @@ static cmark_node *try_opening_table_row(cmark_syntax_extension *self,
       cell->cell_data = NULL;
       cmark_node_set_string_content(node, (char *) cell->buf->ptr);
       cmark_node_set_syntax_extension(node, self);
+      node->cell_index = i;
       set_cell_index(node, i);
     }
 
@@ -1128,6 +1141,26 @@ int cmark_gfm_extensions_set_table_row_is_header(cmark_node *node, int is_header
 
   ((node_table_row *)node->as.opaque)->is_header = (is_header != 0);
   return 1;
+}
+
+CMARK_GFM_EXPORT
+uint8_t cmark_gfm_extensions_get_table_cell_alignment(cmark_node *node)
+{
+  if (!node || node->type != CMARK_NODE_TABLE_CELL || !node->parent ||
+      !node->parent->parent)
+    return 0;
+
+  const uint8_t *alignments =
+      get_table_alignments(node->parent->parent);
+  if (!alignments)
+    return 0;
+
+  unsigned colspan = get_cell_colspan(node);
+  unsigned index = get_cell_index(node);
+  if (colspan == 0 || index == UINT_MAX)
+    return 0;
+
+  return (index >= 0) ? alignments[index] : 0;
 }
 
 CMARK_GFM_EXPORT

@@ -1511,6 +1511,10 @@ static cmark_node *handle_newline(subject *subj) {
   if (nlpos > 1 && peek_at(subj, nlpos - 1) == ' ' &&
       peek_at(subj, nlpos - 2) == ' ') {
     return make_linebreak(subj->mem);
+  } else if (oneEnterNewlineEnable == 1 && nlpos > 1 &&
+             peek_at(subj, nlpos - 1) != '\n' &&
+             peek_at(subj, nlpos + 1) != '\n') {
+    return make_linebreak(subj->mem);
   } else {
     return make_softbreak(subj->mem);
   }
@@ -1622,6 +1626,9 @@ static int parse_inline(cmark_parser *parser, subject *subj, cmark_node *parent,
     new_inl = handle_backticks(subj, options);
     break;
   case '\\':
+    new_inl = try_extensions(parser, parent, c, subj);
+    if (new_inl != NULL)
+      break;
     new_inl = handle_backslash(parser, subj);
     break;
   case '&':

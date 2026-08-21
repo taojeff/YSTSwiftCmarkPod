@@ -39,7 +39,10 @@ Pod::Spec.new do |s|
     ss.dependency 'YSTSwiftCmarkPod/cmark_gfm'
     ss.source_files = 'extensions/**/*.{h,c}'
     ss.preserve_paths = 'extensions/**/*'
-    ss.public_header_files = 'extensions/include/*.h'
+    ss.public_header_files = \
+      'extensions/include/cmark-gfm-core-extensions.h', \
+      'extensions/include/emoji.h', \
+      'extensions/include/math_mark.h'
     ss.pod_target_xcconfig = common_xcconfig
   end
 end

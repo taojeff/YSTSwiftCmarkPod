@@ -3,6 +3,5 @@ module cmark_gfm_extensions {
   header "cmark-gfm-core-extensions.h"
   header "emoji.h"
   header "math_mark.h"
+  export *
 }
-
-export *
